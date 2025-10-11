@@ -3,7 +3,7 @@ import Joi from 'joi';
 export const createSchema = Joi.object({
     name: Joi.string()
         .trim()
-        .pattern(/^(?! )[A-Za-z0-9\s]*[A-Za-z][A-Za-z0-9\s]*$/)
+        .pattern(/^[A-Za-z0-9 ]*[A-Za-z][A-Za-z0-9 ]*$/)
         .required()
         .messages({
             'string.empty': 'Name cannot be empty!',
@@ -34,7 +34,7 @@ export const getAndDeleteByIdSchema = Joi.object({
 export const updateByIdSchema = Joi.object({
     name: Joi.string()
         .trim()
-        .pattern(/^(?! )[A-Za-z0-9\s]*[A-Za-z][A-Za-z0-9\s]*$/)
+        .pattern(/^[A-Za-z0-9 ]*[A-Za-z][A-Za-z0-9 ]*$/)
         .required()
         .messages({
             'string.empty': 'Name cannot be empty!',

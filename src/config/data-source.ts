@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import path from 'path';
 import { DataSource } from 'typeorm';
 import { Config } from './index';
 
@@ -13,7 +14,7 @@ export const AppDataSource = new DataSource({
     //     Config.NODE_ENV === 'test' || Config.NODE_ENV === 'development',
     synchronize: false,
     logging: false,
-    entities: ['src/entity/*.{ts,js}'],
-    migrations: ['src/migration/*.{ts,js}'],
+    entities: [path.join(__dirname, '../entity/*.{ts,js}')], // ✅ Auto-adjusts
+    migrations: [path.join(__dirname, '../migration/*.{ts,js}')],
     subscribers: [],
 });
