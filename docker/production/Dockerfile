@@ -11,6 +11,12 @@ COPY . .
 # Build TypeScript
 RUN npm run build
 
+# Copy certs into dist (so they’re available in final image)
+RUN mkdir -p dist/certs && cp -r certs/* dist/certs/
+
+# Copy .env.development into dist
+RUN cp .env.development dist/.env.development || echo ".env.development not found"
+
 # ---- Production stage ----
 FROM node:22-alpine AS production
 
