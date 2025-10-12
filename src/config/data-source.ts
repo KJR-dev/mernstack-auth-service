@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import path from 'path';
+import path from 'node:path';
 import { DataSource } from 'typeorm';
 import { Config } from './index';
 
