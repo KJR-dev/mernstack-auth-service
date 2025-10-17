@@ -11,6 +11,9 @@ const {
     NODE_ENV,
     PORT,
 
+    //Frontend URL
+    FRONTEND_URL,
+
     //PostgreSQL
     POSTGRESQL_HOST,
     POSTGRESQL_PORT,
@@ -30,6 +33,9 @@ export const Config = {
     //General
     NODE_ENV,
     PORT,
+
+    //Frontend URL
+    FRONTEND_URL,
 
     //PostgreSQL
     POSTGRESQL_HOST,
