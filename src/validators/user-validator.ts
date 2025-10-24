@@ -40,10 +40,17 @@ export const createUserSchema = Joi.object({
             'string.pattern.name':
                 'Password must include at least one {#name} character.',
         }),
-    role: Joi.string().trim().valid(Roles.CUSTOMER).messages({
+    role: Joi.string().trim().valid(Roles.CUSTOMER, Roles.MANAGER).messages({
         'string.base': 'Role must be a string.',
         'any.only': 'Role must be: admin',
         'string.empty': 'Role is required and cannot be empty.',
+    }),
+    tenantId: Joi.number().integer().positive().min(1).required().messages({
+        'number.base': 'Tenant id must be a number.',
+        'number.integer': 'Tenant id must be an integer.',
+        'number.positive': 'Tenant id must be a positive number.',
+        'number.min': 'Tenant id must be at least 1.',
+        'any.required': 'Tenant id is required.',
     }),
 });
 

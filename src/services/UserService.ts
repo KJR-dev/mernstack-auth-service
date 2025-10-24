@@ -1,10 +1,10 @@
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { User } from '../entity/User';
 import { UserData } from '../types/auth';
 import createHttpError from 'http-errors';
 import { Roles } from '../constants';
 import bcrypt from 'bcrypt';
-import { UserUpadateData } from '../types/user';
+import { UserQueryParams, UserUpadateData } from '../types/user';
 import { Tenant } from '../entity/Tenant';
 
 export class UserService {
@@ -52,14 +52,24 @@ export class UserService {
         });
     }
 
-    async getAll(role?: string): Promise<User[]> {
-        const where: FindOptionsWhere<User> | undefined = role
-            ? { role }
-            : undefined;
-        return await this.userRepository.find({
-            where,
-            relations: ['tenant'],
-        });
+    // async getAll(role?: string): Promise<User[]> {
+    //     const where: FindOptionsWhere<User> | undefined = role
+    //         ? { role }
+    //         : undefined;
+    //     return await this.userRepository.find({
+    //         where,
+    //         relations: ['tenant'],
+    //     });
+    // }
+
+    async getAll(validatedQuery: UserQueryParams): Promise<[User[], number]> {
+        const queryBuilder = this.userRepository.createQueryBuilder();
+        const result = await queryBuilder
+            .skip((validatedQuery.currentPage - 1) * validatedQuery.perPage)
+            .take(validatedQuery.perPage)
+            .getManyAndCount();
+
+        return result;
     }
 
     async findById(id: number) {

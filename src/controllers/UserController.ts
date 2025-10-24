@@ -1,7 +1,12 @@
 import { NextFunction, Request, Response } from 'express';
-import { CreateUserRequest, getByIdUserRequest } from '../types/user';
+import {
+    CreateUserRequest,
+    getByIdUserRequest,
+    UserQueryParams,
+} from '../types/user';
 import { Logger } from 'winston';
 import { UserService } from '../services/UserService';
+import { matchedData } from 'express-validator';
 
 export class UserController {
     constructor(
@@ -31,10 +36,18 @@ export class UserController {
 
     async getAll(req: Request, res: Response, next: NextFunction) {
         this.logger.debug('Incoming user data for create', req.body);
+        const validatedQuery: UserQueryParams = matchedData(req, {
+            onlyValidData: true,
+        });
         try {
-            const { role = '' } = req.query as { role: string };
-            const user = await this.userService.getAll(role);
-            res.status(201).json(user);
+            const [users, count] =
+                await this.userService.getAll(validatedQuery);
+            res.status(201).json({
+                currentPage: validatedQuery.currentPage,
+                perPage: validatedQuery.perPage,
+                total: count,
+                data: users,
+            });
         } catch (error) {
             next(error);
             return;

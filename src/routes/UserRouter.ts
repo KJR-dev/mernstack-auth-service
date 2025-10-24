@@ -11,6 +11,7 @@ import { sanitizeXSSMiddleware } from '../middlewares/sanitizeXSS';
 import authenticate from '../middlewares/authenticate';
 import { canAccess } from '../middlewares/canAccess';
 import { Roles } from '../constants';
+import listUsersValidator from '../validators/list-users-validator';
 
 const userRouter = Router();
 
@@ -30,6 +31,7 @@ userRouter
     .get(
         authenticate,
         canAccess([Roles.ADMIN]),
+        listUsersValidator,
         async (req: Request, res: Response, next: NextFunction) => {
             await userController.getAll(req, res, next);
         },

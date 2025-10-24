@@ -17,6 +17,12 @@ export interface CreateUserRequest extends Request {
     body: UserData;
 }
 
+export interface UserQueryParams {
+    currentPage: number;
+    perPage: number;
+    // role: string,
+}
+
 export interface getByIdUserRequest extends Request {
     body: UserId;
 }
