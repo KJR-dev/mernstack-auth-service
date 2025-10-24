@@ -52,16 +52,6 @@ export class UserService {
         });
     }
 
-    // async getAll(role?: string): Promise<User[]> {
-    //     const where: FindOptionsWhere<User> | undefined = role
-    //         ? { role }
-    //         : undefined;
-    //     return await this.userRepository.find({
-    //         where,
-    //         relations: ['tenant'],
-    //     });
-    // }
-
     async getAll(validatedQuery: UserQueryParams): Promise<[User[], number]> {
         const queryBuilder = this.userRepository.createQueryBuilder();
         const result = await queryBuilder
