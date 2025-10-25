@@ -20,7 +20,8 @@ export interface CreateUserRequest extends Request {
 export interface UserQueryParams {
     currentPage: number;
     perPage: number;
-    // role: string,
+    q: string;
+    role: string;
 }
 
 export interface getByIdUserRequest extends Request {
