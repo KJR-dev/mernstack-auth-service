@@ -40,18 +40,33 @@ export const createUserSchema = Joi.object({
             'string.pattern.name':
                 'Password must include at least one {#name} character.',
         }),
-    role: Joi.string().trim().valid(Roles.CUSTOMER, Roles.MANAGER).messages({
-        'string.base': 'Role must be a string.',
-        'any.only': 'Role must be: admin',
-        'string.empty': 'Role is required and cannot be empty.',
-    }),
-    tenantId: Joi.number().integer().positive().min(1).required().messages({
-        'number.base': 'Tenant id must be a number.',
-        'number.integer': 'Tenant id must be an integer.',
-        'number.positive': 'Tenant id must be a positive number.',
-        'number.min': 'Tenant id must be at least 1.',
-        'any.required': 'Tenant id is required.',
-    }),
+    role: Joi.string()
+        .trim()
+        .valid(Roles.ADMIN, Roles.CUSTOMER, Roles.MANAGER)
+        .messages({
+            'string.base': 'Role must be a string.',
+            'any.only': 'Role must be: admin , manager and customer',
+            'string.empty': 'Role is required and cannot be empty.',
+        }),
+    tenantId: Joi.number()
+        .integer()
+        .positive()
+        .min(1)
+        .when('role', {
+            is: Roles.MANAGER,
+            then: Joi.required().messages({
+                'any.required': 'Tenant id is required for manager role.',
+            }),
+            otherwise: Joi.forbidden().messages({
+                'any.unknown': 'Tenant id is only allowed for manager role.',
+            }),
+        })
+        .messages({
+            'number.base': 'Tenant id must be a number.',
+            'number.integer': 'Tenant id must be an integer.',
+            'number.positive': 'Tenant id must be a positive number.',
+            'number.min': 'Tenant id must be at least 1.',
+        }),
 });
 
 export const getByIdSchema = Joi.object({

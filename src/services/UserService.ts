@@ -105,7 +105,9 @@ export class UserService {
         userUpdate.lastName = data.lastName;
         userUpdate.email = data.email;
         userUpdate.role = data.role;
-        userUpdate.tenant = { id: data.tenantId } as Tenant;
+        userUpdate.tenant = data.tenantId
+            ? ({ id: data.tenantId } as Tenant)
+            : null;
 
         await this.userRepository.save(userUpdate);
         return userUpdate;
