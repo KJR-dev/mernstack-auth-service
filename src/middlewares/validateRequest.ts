@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
+import createHttpError from 'http-errors';
 import { ObjectSchema } from 'joi';
 import { ParsedQs } from 'qs';
 
@@ -16,11 +17,12 @@ export const validateRequest = <T extends object>(
         });
 
         if (result.error) {
-            const messages = result.error.details.map(
-                (detail) => detail.message,
-            );
-            res.status(400).json({ errors: messages });
-            return;
+            // const messages = result.error.details.map(
+            //     (detail) => detail.message,
+            // );
+            return next(createHttpError(400, result.error));
+            // res.status(400).json({ errors: messages });
+            // return;
         }
 
         if (key === 'body') {

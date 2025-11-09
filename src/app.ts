@@ -2,11 +2,10 @@ import 'reflect-metadata';
 import express, { NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import logger from './config/logger';
-import { HttpError } from 'http-errors';
 import route from './routes';
 import helmet from 'helmet';
 import { Config } from './config';
+import { globalErrorHandler } from './middlewares/golbalErrorHandler';
 
 const app = express();
 app.use(
@@ -27,19 +26,5 @@ app.get('/', (_req: Request, res: Response, next: NextFunction) => {
 
 app.use('/api', route);
 //Global error handler.
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-app.use((err: HttpError, _req: Request, res: Response, _next: NextFunction) => {
-    logger.error(err.message);
-    const statusCode = err.statusCode || err.status || 500;
-    res.status(statusCode).json({
-        errors: [
-            {
-                type: err.name,
-                msg: err.message,
-                path: '',
-                location: '',
-            },
-        ],
-    });
-});
+app.use(globalErrorHandler);
 export default app;
