@@ -1,6 +1,10 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import { UserController } from '../controllers/UserController';
-import { CreateUserRequest, getByIdUserRequest } from '../types/user';
+import {
+    CreateUserRequest,
+    getByIdUserRequest,
+    UpadateUserRequest,
+} from '../types/user';
 import logger from '../config/logger';
 import { AppDataSource } from '../config/data-source';
 import { UserService } from '../services/UserService';
@@ -53,6 +57,14 @@ userRouter
         validateRequest(getByIdSchema, 'params'),
         async (req: getByIdUserRequest, res: Response, next: NextFunction) => {
             await userController.deleteById(req, res, next);
+        },
+    )
+    .patch(
+        authenticate,
+        canAccess([Roles.ADMIN]),
+        validateRequest(getByIdSchema, 'params'),
+        async (req: UpadateUserRequest, res: Response, next: NextFunction) => {
+            await userController.updateById(req, res, next);
         },
     );
 

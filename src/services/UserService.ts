@@ -4,7 +4,7 @@ import { UserData } from '../types/auth';
 import createHttpError from 'http-errors';
 import { Roles } from '../constants';
 import bcrypt from 'bcrypt';
-import { UserQueryParams, UserUpadateData } from '../types/user';
+import { UserQueryParams, UserUpdateData } from '../types/user';
 import { Tenant } from '../entity/Tenant';
 
 export class UserService {
@@ -91,23 +91,23 @@ export class UserService {
         return await this.userRepository.softDelete({ id });
     }
 
-    async updateById(id: number, data: UserUpadateData) {
-        const managerUpdate = await this.userRepository.findOne({
+    async updateById(id: number, data: UserUpdateData) {
+        const userUpdate = await this.userRepository.findOne({
             where: { id },
             relations: ['tenant'],
         });
 
-        if (!managerUpdate) {
+        if (!userUpdate) {
             throw new Error(`User with ID ${id} not found`);
         }
 
-        managerUpdate.firstName = data.firstName;
-        managerUpdate.lastName = data.lastName;
-        managerUpdate.email = data.email;
-        managerUpdate.role = data.role;
-        managerUpdate.tenant = { id: data.tenantId } as Tenant;
+        userUpdate.firstName = data.firstName;
+        userUpdate.lastName = data.lastName;
+        userUpdate.email = data.email;
+        userUpdate.role = data.role;
+        userUpdate.tenant = { id: data.tenantId } as Tenant;
 
-        await this.userRepository.save(managerUpdate);
-        return managerUpdate;
+        await this.userRepository.save(userUpdate);
+        return userUpdate;
     }
 }

@@ -28,7 +28,7 @@ export interface getByIdUserRequest extends Request {
     body: UserId;
 }
 
-export interface UserUpadateData {
+export interface UserUpdateData {
     firstName: string;
     lastName: string;
     email: string;
@@ -37,5 +37,5 @@ export interface UserUpadateData {
 }
 
 export interface UpadateUserRequest extends Request {
-    body: UserUpadateData;
+    body: UserUpdateData;
 }
