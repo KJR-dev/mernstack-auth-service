@@ -10,10 +10,19 @@ export class TenantService {
     }
 
     async getAll(validateQuery: TenantQueryParams) {
-        const queryBuilder = this.tenantRepository.createQueryBuilder();
+        const queryBuilder = this.tenantRepository.createQueryBuilder('tenant');
+
+        if (validateQuery.q) {
+            const searchTerm = `%${validateQuery.q}%`;
+            queryBuilder
+                .where('tenant.name ILIKE :q', { q: searchTerm })
+                .orWhere('tenant.address ILIKE :q', { q: searchTerm });
+        }
+
         const result = await queryBuilder
             .skip((validateQuery.currentPage - 1) * validateQuery.perPage)
             .take(validateQuery.perPage)
+            .orderBy('tenant.id', 'DESC')
             .getManyAndCount();
 
         return result;
