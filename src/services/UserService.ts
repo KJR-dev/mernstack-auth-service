@@ -1,11 +1,11 @@
+import bcrypt from 'bcrypt';
+import createHttpError from 'http-errors';
 import { Brackets, Repository } from 'typeorm';
+import { Roles } from '../constants';
+import { Tenant } from '../entity/Tenant';
 import { User } from '../entity/User';
 import { UserData } from '../types/auth';
-import createHttpError from 'http-errors';
-import { Roles } from '../constants';
-import bcrypt from 'bcrypt';
 import { UserQueryParams, UserUpdateData } from '../types/user';
-import { Tenant } from '../entity/Tenant';
 
 export class UserService {
     constructor(private userRepository: Repository<User>) {}
@@ -49,6 +49,7 @@ export class UserService {
                 'password',
                 'role',
             ],
+            relations: ['tenant'],
         });
     }
 

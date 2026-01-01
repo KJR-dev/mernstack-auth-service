@@ -1,11 +1,11 @@
 import { NextFunction, Response } from 'express';
-import { AuthRequest, RegisterUserRequest } from '../types/auth';
-import { UserService } from '../services/UserService';
-import { Logger } from 'winston';
-import { JwtPayload } from 'jsonwebtoken';
-import { TokenService } from '../services/TokenService';
 import createHttpError from 'http-errors';
+import { JwtPayload } from 'jsonwebtoken';
+import { Logger } from 'winston';
 import { CredentialService } from '../services/CredentialService';
+import { TokenService } from '../services/TokenService';
+import { UserService } from '../services/UserService';
+import { AuthRequest, RegisterUserRequest } from '../types/auth';
 
 export class AuthController {
     constructor(
@@ -108,6 +108,10 @@ export class AuthController {
             const payload: JwtPayload = {
                 sub: String(user.id),
                 role: user.role,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                tenantId: user.tenant?.id,
             };
 
             const accessToken = this.tokenService.generateAccessToken(payload);
