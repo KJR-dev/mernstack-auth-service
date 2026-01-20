@@ -1,16 +1,20 @@
-import 'reflect-metadata';
-import express, { NextFunction, Request, Response } from 'express';
-import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import route from './routes';
+import cors from 'cors';
+import express, { NextFunction, Request, Response } from 'express';
 import helmet from 'helmet';
+import 'reflect-metadata';
 import { Config } from './config';
 import { globalErrorHandler } from './middlewares/golbalErrorHandler';
+import route from './routes';
 
 const app = express();
+const ALLOWED_DOMAINS = [
+    Config.FRONTEND_ADMIN_UI_URL,
+    Config.FRONTEND_CLIENT_UI_URL,
+];
 app.use(
     cors({
-        origin: Config.FRONTEND_URL,
+        origin: ALLOWED_DOMAINS as string[],
         credentials: true,
     }),
 );

@@ -12,7 +12,8 @@ const {
     PORT,
 
     //Frontend URL
-    FRONTEND_URL,
+    FRONTEND_ADMIN_UI_URL,
+    FRONTEND_CLIENT_UI_URL,
 
     //PostgreSQL
     POSTGRESQL_HOST,
@@ -35,7 +36,8 @@ export const Config = {
     PORT,
 
     //Frontend URL
-    FRONTEND_URL,
+    FRONTEND_ADMIN_UI_URL,
+    FRONTEND_CLIENT_UI_URL,
 
     //PostgreSQL
     POSTGRESQL_HOST,
