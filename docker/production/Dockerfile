@@ -1,35 +1,69 @@
-# ---- Build stage ----
-FROM node:22-alpine AS builder
+# Use Dockerfile syntax version 1 (required for advanced features like RUN --mount)
+# syntax=docker/dockerfile:1
 
-WORKDIR /app
+# Define Node.js version as a build-time argument
+ARG NODE_VERSION=21.7.1
 
-COPY package*.json ./
-RUN npm ci
 
+# =========================
+# 🧱 BUILD STAGE
+# =========================
+# Use lightweight Alpine-based Node.js image for building the app
+FROM node:${NODE_VERSION}-alpine as builder
+
+# Set working directory inside the container
+WORKDIR /home/node/app
+
+# Install dependencies using npm ci
+# - Bind-mount package.json and package-lock.json from host
+# - Use npm cache to speed up future builds
+# - npm ci installs exact versions from package-lock.json
+RUN --mount=type=bind,source=package.json,target=package.json \
+    --mount=type=bind,source=package-lock.json,target=package-lock.json \
+    --mount=type=cache,target=/root/.npm \
+    npm ci
+
+# Copy entire project source code into the container
 COPY . .
 
-# Build TypeScript
+# Build the application (usually generates dist/ folder)
 RUN npm run build
 
-# Copy certs into dist (so they’re available in final image)
-RUN mkdir -p dist/certs && cp -r certs/* dist/certs/
 
-# Copy .env.development into dist
-RUN cp .env.development dist/.env.development || echo ".env.development not found"
+# =========================
+# 🚀 PRODUCTION (RUNNER) STAGE
+# =========================
+# Start a fresh lightweight Node.js image for production
+FROM node:${NODE_VERSION}-alpine as runner
 
-# ---- Production stage ----
-FROM node:22-alpine AS production
+# Run container as non-root user for better security
+USER node
 
+# Create application directory
+RUN mkdir -p /home/node/app
+
+# Set working directory
+WORKDIR /home/node/app
+
+# Set environment to production
 ENV NODE_ENV=production
 
-WORKDIR /app
+# Install only production dependencies
+# - --omit=dev skips devDependencies
+# - --ignore-scripts avoids running postinstall scripts
+# - Uses cache for faster installs
+RUN --mount=type=bind,source=package.json,target=package.json \
+    --mount=type=bind,source=package-lock.json,target=package-lock.json \
+    --mount=type=cache,target=/root/.npm \
+    npm ci --omit=dev --ignore-scripts
 
-COPY package*.json ./
-RUN npm ci --only=production --ignore-scripts
+# Copy only the built output (dist folder) from builder stage
+# --chown ensures correct file ownership for node user
+COPY --from=builder --chown=node:node /home/node/app/dist ./
 
-# Copy built files only
-COPY --from=builder /app/dist ./dist
+# Expose the application port
+EXPOSE 5501
 
-EXPOSE 3000
-
-CMD ["node", "dist/src/server.js"]
+# Start the Node.js application
+# ⚠️ Make sure this file exists in the dist folder
+CMD ["node", "src/server.js"]
