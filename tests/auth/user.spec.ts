@@ -1,17 +1,17 @@
+import createJWKSMock from 'mock-jwks';
 import request from 'supertest';
 import { DataSource } from 'typeorm';
-import { AppDataSource } from '../../src/config/data-source';
 import app from '../../src/app';
-import { User } from '../../src/entity/User';
+import { AppDataSource } from '../../src/config/data-source';
 import { Roles } from '../../src/constants';
-import createJWKSMock from 'mock-jwks';
+import { User } from '../../src/entity/User';
 
 describe('POST /auth/self', () => {
     let connection: DataSource;
     let jwks: ReturnType<typeof createJWKSMock>;
 
     beforeAll(async () => {
-        jwks = createJWKSMock('http://localhost:3000');
+        jwks = createJWKSMock('http://localhost:5501');
         connection = await AppDataSource.initialize();
     });
 

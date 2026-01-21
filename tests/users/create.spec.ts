@@ -1,10 +1,10 @@
+import createJWKSMock from 'mock-jwks';
 import request from 'supertest';
 import { DataSource } from 'typeorm';
-import { AppDataSource } from '../../src/config/data-source';
 import app from '../../src/app';
-import createJWKSMock from 'mock-jwks';
-import { User } from '../../src/entity/User';
+import { AppDataSource } from '../../src/config/data-source';
 import { Roles } from '../../src/constants';
+import { User } from '../../src/entity/User';
 
 describe('POST /user', () => {
     let connection: DataSource;
@@ -14,7 +14,7 @@ describe('POST /user', () => {
     let managerToken: string;
 
     beforeAll(async () => {
-        jwks = createJWKSMock('http://localhost:3000');
+        jwks = createJWKSMock('http://localhost:5501');
         connection = await AppDataSource.initialize();
     });
 
@@ -49,7 +49,7 @@ describe('POST /user', () => {
             //Action
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             const response = await request(app)
-                .post('/api/v1/web/user')
+                .post('/api/v1/web/auth/user')
                 .set('Cookie', [`accessToken=${adminToken}`])
                 .send(userData);
 
@@ -69,7 +69,7 @@ describe('POST /user', () => {
             //Action
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             const response = await request(app)
-                .post('/api/v1/web/user')
+                .post('/api/v1/web/auth/user')
                 .set('Cookie', [`accessToken=${customerToken}`])
                 .send(userData);
 
@@ -89,7 +89,7 @@ describe('POST /user', () => {
             //Action
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             const response = await request(app)
-                .post('/api/v1/web/user')
+                .post('/api/v1/web/auth/user')
                 .set('Cookie', [`accessToken=${managerToken}`])
                 .send(userData);
 

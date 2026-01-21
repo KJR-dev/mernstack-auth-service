@@ -1,8 +1,8 @@
-import { DataSource } from 'typeorm';
-import { AppDataSource } from '../../src/config/data-source';
-import request from 'supertest';
-import app from '../../src/app';
 import createJWKSMock from 'mock-jwks';
+import request from 'supertest';
+import { DataSource } from 'typeorm';
+import app from '../../src/app';
+import { AppDataSource } from '../../src/config/data-source';
 import { Roles } from '../../src/constants';
 import { User } from '../../src/entity/User';
 describe('GET /user', () => {
@@ -13,7 +13,7 @@ describe('GET /user', () => {
 
     beforeAll(async () => {
         connection = await AppDataSource.initialize();
-        jwks = createJWKSMock('http://localhost:3000');
+        jwks = createJWKSMock('http://localhost:5501');
     });
 
     beforeEach(async () => {
@@ -45,13 +45,13 @@ describe('GET /user', () => {
                 //Action
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 await request(app)
-                    .post('/api/v1/web/user')
+                    .post('/api/v1/web/auth/user')
                     .set('Cookie', [`accessToken=${adminToken}`])
                     .send(userData);
 
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 const response = await request(app)
-                    .get('/api/v1/web/user')
+                    .get('/api/v1/web/auth/user')
                     .set('Cookie', [`accessToken=${adminToken}`])
                     .send();
 
@@ -72,7 +72,7 @@ describe('GET /user', () => {
                 //Action
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 await request(app)
-                    .post('/api/v1/web/user')
+                    .post('/api/v1/web/auth/user')
                     .set('Cookie', [`accessToken=${adminToken}`])
                     .send(userData);
 
@@ -97,13 +97,13 @@ describe('GET /user', () => {
                 //Action
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 await request(app)
-                    .post('/api/v1/web/user')
+                    .post('/api/v1/web/auth/user')
                     .set('Cookie', [`accessToken=${adminToken}`])
                     .send(userData);
 
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 const response = await request(app)
-                    .get('/api/v1/web/user')
+                    .get('/api/v1/web/auth/user')
                     .send();
 
                 //Asserts
@@ -123,14 +123,14 @@ describe('GET /user', () => {
                 //Action
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 await request(app)
-                    .post('/api/v1/web/user')
+                    .post('/api/v1/web/auth/user')
                     .set('Cookie', [`accessToken=${adminToken}`])
                     .send(userData);
 
                 //Action
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 const response = await request(app)
-                    .get('/api/v1/web/user')
+                    .get('/api/v1/web/auth/user')
                     .set('Cookie', [`accessToken=${customerToken}`])
                     .send();
 

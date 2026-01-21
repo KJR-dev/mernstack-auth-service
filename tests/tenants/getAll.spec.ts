@@ -1,10 +1,10 @@
-import { DataSource } from 'typeorm';
-import { AppDataSource } from '../../src/config/data-source';
-import request from 'supertest';
-import app from '../../src/app';
-import { Tenant } from '../../src/entity/Tenant';
 import createJWKSMock from 'mock-jwks';
+import request from 'supertest';
+import { DataSource } from 'typeorm';
+import app from '../../src/app';
+import { AppDataSource } from '../../src/config/data-source';
 import { Roles } from '../../src/constants';
+import { Tenant } from '../../src/entity/Tenant';
 describe('GET /tenants', () => {
     let connection: DataSource;
     let jwks: ReturnType<typeof createJWKSMock>;
@@ -12,7 +12,7 @@ describe('GET /tenants', () => {
 
     beforeAll(async () => {
         connection = await AppDataSource.initialize();
-        jwks = createJWKSMock('http://localhost:3000');
+        jwks = createJWKSMock('http://localhost:5501');
     });
 
     beforeEach(async () => {
@@ -37,7 +37,7 @@ describe('GET /tenants', () => {
                 //Action
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 const response = await request(app)
-                    .get('/api/v1/web/tenants')
+                    .get('/api/v1/web/auth/tenants')
                     .set('Cookie', [`accessToken=${adminToken}`])
                     .send();
 
@@ -60,7 +60,7 @@ describe('GET /tenants', () => {
                 //Action
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 const response = await request(app)
-                    .post('/api/v1/web/tenants')
+                    .post('/api/v1/web/auth/tenants')
                     .set('Cookie', [`accessToken=${managerToken}`])
                     .send(tenantData);
 
