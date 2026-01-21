@@ -1,10 +1,10 @@
-import { DataSource } from 'typeorm';
-import { AppDataSource } from '../../src/config/data-source';
-import request from 'supertest';
-import app from '../../src/app';
-import { Tenant } from '../../src/entity/Tenant';
 import createJWKSMock from 'mock-jwks';
+import request from 'supertest';
+import { DataSource } from 'typeorm';
+import app from '../../src/app';
+import { AppDataSource } from '../../src/config/data-source';
 import { Roles } from '../../src/constants';
+import { Tenant } from '../../src/entity/Tenant';
 describe('GET /tenants/:id', () => {
     let connection: DataSource;
     let jwks: ReturnType<typeof createJWKSMock>;
@@ -12,13 +12,13 @@ describe('GET /tenants/:id', () => {
 
     beforeAll(async () => {
         connection = await AppDataSource.initialize();
-        jwks = createJWKSMock('http://localhost:3000');
+        jwks = createJWKSMock('http://localhost:5501');
     });
 
     beforeEach(async () => {
         await connection.dropDatabase();
         await connection.synchronize();
-        jwks.start();
+        jwks?.start();
         adminToken = jwks.token({ sub: '1', role: Roles.ADMIN });
     });
 
@@ -27,7 +27,7 @@ describe('GET /tenants/:id', () => {
     });
 
     afterEach(() => {
-        jwks.stop();
+        jwks?.stop();
     });
     describe('Happy parts', () => {
         describe('Given all field', () => {
@@ -41,7 +41,7 @@ describe('GET /tenants/:id', () => {
                 //Action
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 await request(app)
-                    .post('/api/v1/web/tenants')
+                    .post('/api/v1/web/auth/tenants')
                     .set('Cookie', [`accessToken=${adminToken}`])
                     .send(tenantData);
 
@@ -52,7 +52,7 @@ describe('GET /tenants/:id', () => {
                 //Action
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 const response = await request(app)
-                    .get(`/api/v1/web/tenants/${tenant[0].id}`)
+                    .get(`/api/v1/web/auth/tenants/${tenant[0].id}`)
                     .set('Cookie', [`accessToken=${adminToken}`])
                     .send();
 
@@ -66,7 +66,7 @@ describe('GET /tenants/:id', () => {
                 //Action
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 const response = await request(app)
-                    .get('/api/v1/web/tenants/:id')
+                    .get('/api/v1/web/auth/tenants/:id')
                     .send();
 
                 const tenantsRepository = connection.getRepository(Tenant);
@@ -93,7 +93,7 @@ describe('GET /tenants/:id', () => {
                 //Action
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 const response = await request(app)
-                    .post('/api/v1/web/tenants')
+                    .post('/api/v1/web/auth/tenants')
                     .set('Cookie', [`accessToken=${managerToken}`])
                     .send(tenantData);
 
@@ -125,7 +125,7 @@ describe('GET /tenants/:id', () => {
                 //Action
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 await request(app)
-                    .post('/api/v1/web/tenants')
+                    .post('/api/v1/web/auth/tenants')
                     .set('Cookie', [`accessToken=${adminToken}`])
                     .send(tenantData);
 
@@ -137,7 +137,7 @@ describe('GET /tenants/:id', () => {
                 //Action
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 const response = await request(app)
-                    .get(`/api/v1/web/tenants/"${tenantId}"`)
+                    .get(`/api/v1/web/auth/tenants/"${tenantId}"`)
                     .set('Cookie', [`accessToken=${adminToken}`])
                     .send();
 
@@ -156,7 +156,7 @@ describe('GET /tenants/:id', () => {
                 //Action
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 const response = await request(app)
-                    .post(`/api/v1/web/tenants/${id}`)
+                    .post(`/api/v1/web/auth/tenants/${id}`)
                     .set('Cookie', [`accessToken=${adminToken}`])
                     .send();
 
@@ -175,7 +175,7 @@ describe('GET /tenants/:id', () => {
                 //Action
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 const response = await request(app)
-                    .post(`/api/v1/web/tenants/${id}`)
+                    .post(`/api/v1/web/auth/tenants/${id}`)
                     .set('Cookie', [`accessToken=${adminToken}`])
                     .send();
 

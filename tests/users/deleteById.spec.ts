@@ -1,8 +1,8 @@
-import { DataSource } from 'typeorm';
-import { AppDataSource } from '../../src/config/data-source';
-import request from 'supertest';
-import app from '../../src/app';
 import createJWKSMock from 'mock-jwks';
+import request from 'supertest';
+import { DataSource } from 'typeorm';
+import app from '../../src/app';
+import { AppDataSource } from '../../src/config/data-source';
 import { Roles } from '../../src/constants';
 
 describe('DELETE /user/:id', () => {
@@ -13,13 +13,13 @@ describe('DELETE /user/:id', () => {
 
     beforeAll(async () => {
         connection = await AppDataSource.initialize();
-        jwks = createJWKSMock('http://localhost:3000');
+        jwks = createJWKSMock('http://localhost:5501');
     });
 
     beforeEach(async () => {
         await connection.dropDatabase();
         await connection.synchronize();
-        jwks.start();
+        jwks?.start();
         adminToken = jwks.token({ sub: '1', role: Roles.ADMIN });
         managerToken = jwks.token({ sub: '1', role: Roles.MANAGER });
     });
@@ -29,7 +29,7 @@ describe('DELETE /user/:id', () => {
     });
 
     afterEach(() => {
-        jwks.stop();
+        jwks?.stop();
     });
     describe('Happy parts', () => {
         describe('Given all field', () => {
@@ -46,7 +46,7 @@ describe('DELETE /user/:id', () => {
                 //Action
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 const createData = await request(app)
-                    .post('/api/v1/web/user')
+                    .post('/api/v1/web/auth/user')
                     .set('Cookie', [`accessToken=${adminToken}`])
                     .send(userData);
 
@@ -55,7 +55,7 @@ describe('DELETE /user/:id', () => {
                 //Action
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 const response = await request(app)
-                    .delete(`/api/v1/web/user/${id}`)
+                    .delete(`/api/v1/web/auth/user/${id}`)
                     .set('Cookie', [`accessToken=${adminToken}`])
                     .send();
 
@@ -76,7 +76,7 @@ describe('DELETE /user/:id', () => {
                 //Action
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 await request(app)
-                    .post('/api/v1/web/user')
+                    .post('/api/v1/web/auth/user')
                     .set('Cookie', [`accessToken=${adminToken}`])
                     .send(userData);
 
@@ -86,7 +86,7 @@ describe('DELETE /user/:id', () => {
                 //Action
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 const response = await request(app)
-                    .delete(`/api/v1/web/user/${idStr}`)
+                    .delete(`/api/v1/web/auth/user/${idStr}`)
                     .set('Cookie', [`accessToken=${adminToken}`])
                     .send();
 
@@ -107,14 +107,14 @@ describe('DELETE /user/:id', () => {
                 //Action
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 const createData = await request(app)
-                    .post('/api/v1/web/user')
+                    .post('/api/v1/web/auth/user')
                     .set('Cookie', [`accessToken=${adminToken}`])
                     .send(userData);
 
                 const { id } = createData.body as { id: number };
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 const response = await request(app)
-                    .delete(`/api/v1/web/user/${id}`)
+                    .delete(`/api/v1/web/auth/user/${id}`)
                     .send();
 
                 //Asserts
@@ -134,14 +134,14 @@ describe('DELETE /user/:id', () => {
                 //Action
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 const createData = await request(app)
-                    .post('/api/v1/web/user')
+                    .post('/api/v1/web/auth/user')
                     .set('Cookie', [`accessToken=${adminToken}`])
                     .send(userData);
 
                 const { id } = createData.body as { id: number };
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 const response = await request(app)
-                    .delete(`/api/v1/web/user/${id}`)
+                    .delete(`/api/v1/web/auth/user/${id}`)
                     .set('Cookie', [`accessToken=${managerToken}`])
                     .send();
 

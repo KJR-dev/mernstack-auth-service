@@ -1,5 +1,5 @@
 import { checkSchema } from 'express-validator';
-import { Roles } from '../../dist/src/constants';
+import { Roles } from '../constants';
 
 export default checkSchema(
     {
@@ -16,9 +16,9 @@ export default checkSchema(
             customSanitizer: {
                 options: (value: string) => {
                     return [
-                        Roles.ADMIN,
-                        Roles.MANAGER,
-                        Roles.CUSTOMER,
+                        Roles.ADMIN as string,
+                        Roles.MANAGER as string,
+                        Roles.CUSTOMER as string,
                     ].includes(value)
                         ? value
                         : '';
