@@ -17,14 +17,14 @@ describe('POST /manager', () => {
     });
 
     beforeEach(async () => {
-        jwks.start();
+        jwks?.start();
         await connection.dropDatabase();
         await connection.synchronize();
         adminToken = jwks.token({ sub: '1', role: Roles.ADMIN });
     });
 
     afterEach(() => {
-        jwks.stop();
+        jwks?.stop();
     });
 
     afterAll(async () => {

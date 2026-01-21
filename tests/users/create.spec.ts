@@ -19,17 +19,17 @@ describe('POST /user', () => {
     });
 
     beforeEach(async () => {
-        jwks.start();
+        jwks?.start();
         await connection.dropDatabase();
         await connection.synchronize();
-        jwks.start();
+        jwks?.start();
         adminToken = jwks.token({ sub: '1', role: Roles.ADMIN });
         customerToken = jwks.token({ sub: '1', role: Roles.CUSTOMER });
         managerToken = jwks.token({ sub: '1', role: Roles.MANAGER });
     });
 
     afterEach(() => {
-        jwks.stop();
+        jwks?.stop();
     });
 
     afterAll(async () => {

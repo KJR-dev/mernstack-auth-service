@@ -16,13 +16,13 @@ describe('POST /auth/self', () => {
     });
 
     beforeEach(async () => {
-        jwks.start();
+        jwks?.start();
         await connection.dropDatabase();
         await connection.synchronize();
     });
 
     afterEach(() => {
-        jwks.stop();
+        jwks?.stop();
     });
 
     afterAll(async () => {

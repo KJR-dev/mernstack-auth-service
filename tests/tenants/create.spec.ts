@@ -19,7 +19,7 @@ describe('POST /tenants', () => {
     beforeEach(async () => {
         await connection.dropDatabase();
         await connection.synchronize();
-        jwks.start();
+        jwks?.start();
         adminToken = jwks.token({ sub: '1', role: Roles.ADMIN });
     });
 
@@ -28,7 +28,7 @@ describe('POST /tenants', () => {
     });
 
     afterEach(() => {
-        jwks.stop();
+        jwks?.stop();
     });
     describe('Happy parts', () => {
         describe('Given all field', () => {

@@ -19,7 +19,7 @@ describe('GET /user/:id', () => {
     beforeEach(async () => {
         await connection.dropDatabase();
         await connection.synchronize();
-        jwks.start();
+        jwks?.start();
         adminToken = jwks.token({ sub: '1', role: Roles.ADMIN });
         managerToken = jwks.token({ sub: '1', role: Roles.MANAGER });
     });
@@ -29,7 +29,7 @@ describe('GET /user/:id', () => {
     });
 
     afterEach(() => {
-        jwks.stop();
+        jwks?.stop();
     });
     describe('Happy parts', () => {
         describe('Given all field', () => {
