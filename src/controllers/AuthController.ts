@@ -6,6 +6,7 @@ import { CredentialService } from '../services/CredentialService';
 import { TokenService } from '../services/TokenService';
 import { UserService } from '../services/UserService';
 import { AuthRequest, RegisterUserRequest } from '../types/auth';
+import { Config } from '../config';
 
 export class AuthController {
     constructor(
@@ -54,14 +55,14 @@ export class AuthController {
             });
 
             res.cookie('accessToken', accessToken, {
-                domain: 'localhost',
+                domain: Config.MAIN_DOMAIN as string,
                 sameSite: 'strict',
                 maxAge: 1000 * 60 * 60,
                 httpOnly: true,
             });
 
             res.cookie('refreshToken', refreshToken, {
-                domain: 'localhost',
+                domain: Config.MAIN_DOMAIN as string,
                 sameSite: 'strict',
                 maxAge: 1000 * 60 * 60 * 24 * 365,
                 httpOnly: true,
@@ -125,14 +126,14 @@ export class AuthController {
             });
 
             res.cookie('accessToken', accessToken, {
-                domain: 'localhost',
+                domain: Config.MAIN_DOMAIN as string,
                 sameSite: 'strict',
                 maxAge: 1000 * 60 * 60,
                 httpOnly: true,
             });
 
             res.cookie('refreshToken', refreshToken, {
-                domain: 'localhost',
+                domain: Config.MAIN_DOMAIN as string,
                 sameSite: 'strict',
                 maxAge: 1000 * 60 * 60 * 24 * 365,
                 httpOnly: true,
@@ -182,14 +183,14 @@ export class AuthController {
             });
 
             res.cookie('accessToken', accessToken, {
-                domain: 'localhost',
+                domain: Config.MAIN_DOMAIN as string,
                 sameSite: 'strict',
                 maxAge: 1000 * 60 * 60,
                 httpOnly: true,
             });
 
             res.cookie('refreshToken', refreshToken, {
-                domain: 'localhost',
+                domain: Config.MAIN_DOMAIN as string,
                 sameSite: 'strict',
                 maxAge: 1000 * 60 * 60 * 24 * 365,
                 httpOnly: true,

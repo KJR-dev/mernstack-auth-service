@@ -14,6 +14,7 @@ const {
     //Frontend URL
     FRONTEND_ADMIN_UI_URL,
     FRONTEND_CLIENT_UI_URL,
+    MAIN_DOMAIN,
 
     //PostgreSQL
     POSTGRESQL_HOST,
@@ -35,9 +36,10 @@ export const Config = {
     NODE_ENV,
     PORT,
 
-    //Frontend URL
+    //URL
     FRONTEND_ADMIN_UI_URL,
     FRONTEND_CLIENT_UI_URL,
+    MAIN_DOMAIN,
 
     //PostgreSQL
     POSTGRESQL_HOST,
