@@ -20,3 +20,9 @@ export interface CreateTenantRequest extends Request {
 export type IdTenantRequest = Request<ITenantId>;
 
 export type UpdateTenantRequest = Request<ITenantId, object, ITenant>;
+
+export interface TenantQueryParams {
+    q: string;
+    currentPage: number;
+    perPage: number;
+}

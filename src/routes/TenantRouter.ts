@@ -19,6 +19,7 @@ import {
 } from '../types/tenantType';
 import { validateRequest } from '../middlewares/validateRequest';
 import { sanitizeXSSMiddleware } from '../middlewares/sanitizeXSS';
+import listTenantsValidator from '../validators/list-tenants-validator';
 
 const tenantRouter = express.Router();
 
@@ -37,9 +38,12 @@ tenantRouter
             await tenantController.create(req, res, next);
         },
     )
-    .get(async (req: Request, res: Response, next: NextFunction) => {
-        await tenantController.getAll(req, res, next);
-    });
+    .get(
+        listTenantsValidator,
+        async (req: Request, res: Response, next: NextFunction) => {
+            await tenantController.getAll(req, res, next);
+        },
+    );
 tenantRouter
     .route('/:id')
     .get(

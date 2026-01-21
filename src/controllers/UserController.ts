@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import {
     CreateUserRequest,
     getByIdUserRequest,
+    UpadateUserRequest,
     UserQueryParams,
 } from '../types/user';
 import { Logger } from 'winston';
@@ -83,14 +84,14 @@ export class UserController {
     }
 
     async updateById(
-        req: CreateUserRequest,
+        req: UpadateUserRequest,
         res: Response,
         next: NextFunction,
     ) {
-        const managerData = req.body;
+        const userData = req.body;
         const id = Number(req.params.id);
         try {
-            const user = await this.userService.updateById(id, managerData);
+            const user = await this.userService.updateById(id, userData);
             res.status(204).json(user);
         } catch (error) {
             next(error);

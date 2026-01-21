@@ -20,14 +20,15 @@ export interface CreateUserRequest extends Request {
 export interface UserQueryParams {
     currentPage: number;
     perPage: number;
-    // role: string,
+    q: string;
+    role: string;
 }
 
 export interface getByIdUserRequest extends Request {
     body: UserId;
 }
 
-export interface UserUpadateData {
+export interface UserUpdateData {
     firstName: string;
     lastName: string;
     email: string;
@@ -36,5 +37,5 @@ export interface UserUpadateData {
 }
 
 export interface UpadateUserRequest extends Request {
-    body: UserUpadateData;
+    body: UserUpdateData;
 }

@@ -4,9 +4,10 @@ import { Logger } from 'winston';
 import {
     CreateTenantRequest,
     IdTenantRequest,
+    TenantQueryParams,
     UpdateTenantRequest,
 } from '../types/tenantType';
-import { validationResult } from 'express-validator';
+import { matchedData, validationResult } from 'express-validator';
 
 export class TenantController {
     constructor(
@@ -37,10 +38,19 @@ export class TenantController {
     }
 
     async getAll(req: Request, res: Response, next: NextFunction) {
+        const validateQuery = matchedData(req, { onlyValidData: true });
         try {
-            const tenantData = await this.tenantService.getAll();
-            this.logger.info('Tenant has been created', tenantData);
-            res.status(201).json(tenantData);
+            const [tenants, count] = await this.tenantService.getAll(
+                validateQuery as TenantQueryParams,
+            );
+            this.logger.info('Tenant has been created', tenants);
+
+            res.status(201).json({
+                currentPage: validateQuery.currentPage as number,
+                perPage: validateQuery.perPage as number,
+                total: count,
+                data: tenants,
+            });
         } catch (error) {
             next(error);
             return;
