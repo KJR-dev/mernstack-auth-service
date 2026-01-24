@@ -85,6 +85,7 @@ web_modules/
 .env.production
 .env.production.local
 .env.local
+.env.migration
 
 certs/
 public/

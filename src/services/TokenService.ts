@@ -1,10 +1,10 @@
-import fs from 'fs';
-import path from 'path';
 import { JwtPayload, sign } from 'jsonwebtoken';
+import fs from 'node:fs';
+import path from 'node:path';
 import { Repository } from 'typeorm';
 import { Config } from '../config';
-import { User } from '../entity/User';
 import { RefreshToken } from '../entity/RefreshToken';
+import { User } from '../entity/User';
 
 export class TokenService {
     constructor(private refreshTokenRepository: Repository<RefreshToken>) {}
