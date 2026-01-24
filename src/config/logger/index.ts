@@ -5,15 +5,28 @@ import { Config } from '..';
 import fs from 'fs';
 import path from 'path';
 
-/**
- * Deletes log folders older than a specified number of days
- * @param daysToKeep - Number of days to retain logs
- */
-
 const days = 15;
-const deleteOldLogFolders = (daysToKeep: number): void => {
-    const logBaseDir: string = path.join(`logs/${Config.NODE_ENV}`);
 
+// ✅ STEP 1: Pehle base directory banao
+const logBaseDir: string = path.join(`logs/${Config.NODE_ENV}`);
+if (!fs.existsSync(logBaseDir)) {
+    fs.mkdirSync(logBaseDir, { recursive: true });
+    console.log(`Created log base directory: ${logBaseDir}`);
+}
+
+// ✅ STEP 2: Today ka folder banao
+const currentDate: Date = new Date();
+const folderName: string = `${String(currentDate.getDate()).padStart(2, '0')}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${currentDate.getFullYear()}`;
+const logDirectory: string = path.join(logBaseDir, folderName);
+
+if (!fs.existsSync(logDirectory)) {
+    fs.mkdirSync(logDirectory, { recursive: true });
+    console.log(`Created today's log directory: ${logDirectory}`);
+}
+
+// ✅ STEP 3: Ab safe hai - old folders delete karo
+const deleteOldLogFolders = (daysToKeep: number): void => {
+    // Ab directory zaroor exist karegi
     fs.readdir(
         logBaseDir,
         (err: NodeJS.ErrnoException | null, folders: string[]) => {
@@ -25,12 +38,12 @@ const deleteOldLogFolders = (daysToKeep: number): void => {
             const now: Date = new Date();
 
             folders.forEach((folder: string) => {
-                const match = folder.match(/^(\d{2}-\d{2}-\d{4})$/); // Matches folders like '10-02-2025'
+                const match = folder.match(/^(\d{2}-\d{2}-\d{4})$/);
                 if (match) {
                     const folderDateStr: string = match[1];
                     const folderDate: Date = new Date(
                         folderDateStr.split('-').reverse().join('-'),
-                    ); // Convert DD-MM-YYYY to YYYY-MM-DD
+                    );
                     const diffDays: number =
                         (now.getTime() - folderDate.getTime()) /
                         (1000 * 60 * 60 * 24);
@@ -40,7 +53,18 @@ const deleteOldLogFolders = (daysToKeep: number): void => {
                             logBaseDir,
                             folder,
                         );
-                        fs.rmSync(folderPath, { recursive: true, force: true });
+                        try {
+                            fs.rmSync(folderPath, {
+                                recursive: true,
+                                force: true,
+                            });
+                            console.log(`Deleted old log folder: ${folder}`);
+                        } catch (error) {
+                            console.error(
+                                `Failed to delete folder ${folder}:`,
+                                error,
+                            );
+                        }
                     }
                 }
             });
@@ -48,38 +72,22 @@ const deleteOldLogFolders = (daysToKeep: number): void => {
     );
 };
 
-// **Delete Logs Before Initialization**
-deleteOldLogFolders(days); // Delete logs older than 1 day
+// Ab call karo
+deleteOldLogFolders(days);
 
-// **Create Folder for Today's Logs**
-const currentDate: Date = new Date();
-const folderName: string = `${String(currentDate.getDate()).padStart(2, '0')}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${currentDate.getFullYear()}`;
-const logDirectory: string = path.join(`logs/${Config.NODE_ENV}`, folderName);
-
-if (!fs.existsSync(logDirectory)) {
-    fs.mkdirSync(logDirectory, { recursive: true });
-}
-
-// **Define Log Colors**
+// Define Log Colors
 const colors: Record<string, string> = {
-    error: '\x1b[31m', // Red
-    warn: '\x1b[33m', // Yellow
-    info: '\x1b[32m', // Green
-    debug: '\x1b[35m', // Magenta
-    reset: '\x1b[0m', // Reset color
+    error: '\x1b[31m',
+    warn: '\x1b[33m',
+    info: '\x1b[32m',
+    debug: '\x1b[35m',
+    reset: '\x1b[0m',
 };
 
-/**
- * Function to colorize the full log line
- * @param level - Log level (error, warn, info, debug)
- * @param text - Log message
- * @returns Colorized string
- */
 const colorizeText = (level: string, text: string): string => {
     return `${colors[level] || colors.reset}${text}${colors.reset}`;
 };
 
-// **Define Log Interface**
 interface LogInfo {
     timestamp: string;
     level: string;
@@ -88,7 +96,6 @@ interface LogInfo {
     [key: string]: unknown;
 }
 
-// **Console Log Format**
 const consoleLogFormat = winston.format.printf((info: unknown) => {
     const { timestamp, level, message, serviceName, ...meta } = info as LogInfo;
 
@@ -99,7 +106,6 @@ const consoleLogFormat = winston.format.printf((info: unknown) => {
     return colorizeText(level, formattedLog);
 });
 
-// **File Log Format**
 const fileLogFormat = winston.format.combine(
     winston.format.timestamp({ format: 'DD-MM-YYYY HH:mm:ss' }),
     winston.format.printf((info: unknown) => {
@@ -120,15 +126,13 @@ const fileLogFormat = winston.format.combine(
     }),
 );
 
-// **Daily Rotating File Transports**
 const dailyRotateTransport = new winston.transports.DailyRotateFile({
     dirname: logDirectory,
     filename: 'combined-%DATE%.log',
     datePattern: 'DD-MM-YYYY',
-    maxFiles: `${days}+d`,
+    maxFiles: `${days}d`,
     level: 'debug',
     format: fileLogFormat,
-    // silent: Config.NODE_ENV === 'test',
 });
 
 const errorRotateTransport = new winston.transports.DailyRotateFile({
@@ -137,7 +141,6 @@ const errorRotateTransport = new winston.transports.DailyRotateFile({
     datePattern: 'DD-MM-YYYY',
     level: 'error',
     format: fileLogFormat,
-    // silent: Config.NODE_ENV === 'test',
 });
 
 const mongoDBTransport = new winston.transports.MongoDB({
@@ -152,19 +155,15 @@ const mongoDBTransport = new winston.transports.MongoDB({
     storeHost: true,
     metaKey: 'meta',
     expireAfterSeconds: 3600 * 24 * 30,
-    // capped: true, // Optional: limits collection size 512mb
-    // cappedSize: 10 * 1024 * 1024, // 10MB
-    // silent: Config.NODE_ENV === 'test',
 });
 
-// **Logger Instance**
 const logger = winston.createLogger({
     level: 'debug',
     defaultMeta: { serviceName: 'Auth-Service' },
     transports: [
         dailyRotateTransport,
         errorRotateTransport,
-        mongoDBTransport, // ✅ Include MongoDB transport
+        mongoDBTransport,
         new winston.transports.Console({
             level: 'debug',
             format: winston.format.combine(
